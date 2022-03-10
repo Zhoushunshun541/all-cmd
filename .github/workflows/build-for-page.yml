@@ -1,0 +1,53 @@
+name: CD-build & github-pages
+
+on:
+  push: 
+    branches:
+      - main
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: install nodejs
+        # setup pnpm, [action repo](https://github.com/pnpm/action-setup)
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.0.2
+
+      - name: install dependencies
+        run: pnpm install
+
+      - name: build dist
+        run: pnpm build
+        
+      # 上传dist目录作为制品
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          # 制品名称
+          name: production-files # optional, default is artifact
+          # 一个文件, 一个目录 或者 通配符模式 上传
+          path: ./dist
+  
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: production-files
+        path: ./dist
+
+    - name: Deploy to gh-pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
