@@ -1,0 +1,32 @@
+name: CI-eslint-check
+
+on: 
+  push: 
+    branches: 
+      - main
+
+  pull_request:
+
+  pull_request_review:
+
+  # support manual trigger
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+
+    steps:
+      # checkout to newest branch
+      - uses: actions/checkout@v2
+      
+      # setup pnpm, [action repo](https://github.com/pnpm/action-setup)
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.0.2
+
+      - name: Install dependencies using pnpm for current works
+        run: pnpm install
+      
+      - name: Run eslint for current works
+        run: pnpm lint
