@@ -18,5 +18,6 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
+    'import/no-extraneous-dependencies': 0,
   },
 };

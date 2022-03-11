@@ -13,21 +13,23 @@ let show = 0;
 function createWindow(width, height) {
   const win = new BrowserWindow({
     width: 650,
-    height: 60,
+    height: 55,
     x: width * 0.5 - 325,
     y: height * 0.15,
     show: false,
     frame: false,
     resizable: false,
+    autoHideMenuBar: true,
     movable: false,
     alwaysOnTop: true,
+    type: 'desktop',
     webPreferences: {
       devTools: false,
       scrollBounce: true,
       preload: path.join(__dirname, 'preload.js'),
     },
   });
-  win.loadFile('index.html');
+  win.loadFile('../dist/index.html');
   win.once('ready-to-show', () => {
     if (show) {
       win.show();
@@ -37,6 +39,7 @@ function createWindow(width, height) {
 }
 
 app.whenReady().then(() => {
+  app.dock.hide();
   const {
     size: {
       width,
